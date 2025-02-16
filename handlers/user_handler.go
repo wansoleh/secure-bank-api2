@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"account-service/database"
-	"account-service/models"
+	"secure-bank-api2/database"
+	"secure-bank-api2/models"
 	"log"
 	"net/http"
 
@@ -10,7 +10,7 @@ import (
 )
 
 // Get All Users
-func GetUsers(c echo.Context) error {
+func GetAllUsers(c echo.Context) error {
 	rows, err := database.DB.Query("SELECT id, username, role, created_at FROM users")
 	if err != nil {
 		log.Println("Error fetching users:", err)
@@ -32,7 +32,7 @@ func GetUsers(c echo.Context) error {
 }
 
 // Create User
-func CreateUser(c echo.Context) error {
+func RegisterUser(c echo.Context) error {
 	var user models.User
 	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"remark": "Invalid request payload"})

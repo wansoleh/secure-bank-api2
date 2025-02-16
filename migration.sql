@@ -55,13 +55,14 @@ CREATE TABLE jurnal_umum (
     id SERIAL PRIMARY KEY,
     tanggal TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     no_rekening VARCHAR(20) REFERENCES tabungan(no_rekening) ON DELETE CASCADE,
-    id_master_account INT NOT NULL REFERENCES master_account(id) ON DELETE CASCADE,
+    kode_akun VARCHAR(20) NOT NULL REFERENCES master_account(kode_akun) ON DELETE CASCADE,
     tipe CHAR(1) NOT NULL CHECK (tipe IN ('D', 'K')), -- D (Debit), K (Kredit)
     nominal DECIMAL(15,2) NOT NULL CHECK (nominal >= 0),
     keterangan TEXT,
     id_karyawan INT REFERENCES karyawan(id) ON DELETE SET NULL,
     input_by VARCHAR(50) NOT NULL
 );
+
 
 -- Buat tabel Log Aktivitas
 CREATE TABLE log_aktivitas (
@@ -78,5 +79,6 @@ CREATE TABLE log_aktivitas (
 CREATE TABLE master_account (
     id SERIAL PRIMARY KEY,
     nama_akun VARCHAR(100) NOT NULL,
+    kode_akun VARCHAR(100) NOT NULL,
     tipe VARCHAR(10) NOT NULL CHECK (tipe IN ('Aktiva', 'Pasiva', 'Ekuitas', 'Revenue', 'Beban', 'Dividen'))
 );

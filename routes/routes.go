@@ -9,8 +9,9 @@ import (
 
 func SetupRoutes(e *echo.Echo) {
 	// Users Routes
-	e.GET("/users", handlers.GetUsers, middleware.JWTMiddleware())
-	e.POST("/user", handlers.CreateUser, middleware.JWTMiddleware())
+	e.GET("/users", handlers.GetAllUsers, middleware.JWTMiddleware())
+	e.POST("/user", handlers.RegisterUser, middleware.JWTMiddleware())
+
 
 	// Produk Tabungan Routes
 	e.GET("/produk_tabungan", handlers.GetProdukTabungan, middleware.JWTMiddleware())
@@ -25,6 +26,7 @@ func SetupRoutes(e *echo.Echo) {
 	e.GET("/nasabah/:id", handlers.GetNasabahByID, middleware.JWTMiddleware())
 	e.PUT("/nasabah/:id", handlers.UpdateNasabah, middleware.JWTMiddleware())
 	e.DELETE("/nasabah/:id", handlers.DeleteNasabah, middleware.JWTMiddleware())
+	e.POST("/nasabah", handlers.CreateNasabah, middleware.JWTMiddleware())
 
 	// Karyawan Routes
 	e.GET("/karyawans", handlers.GetKaryawans, middleware.JWTMiddleware())

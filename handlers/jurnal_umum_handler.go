@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"account-service/database"
-	"account-service/models"
+	"secure-bank-api2/database"
+	"secure-bank-api2/models"
 	"log"
 	"net/http"
 

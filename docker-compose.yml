@@ -1,8 +1,11 @@
+
 services:
   db:
     image: postgres:latest
     container_name: postgres_container
     restart: always
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -12,21 +15,38 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  migration:
+    image: postgres:latest
+    container_name: migration_container
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./migration.sql:/docker-entrypoint-initdb.d/migration.sql
+    entrypoint: ["sh", "-c", "sleep 5 && PGPASSWORD=${DB_PASSWORD} psql -h db -U ${DB_USER} -d ${DB_NAME} -f /docker-entrypoint-initdb.d/migration.sql"]
+
+  seeder:
+    image: postgres:latest
+    container_name: seeder_container
+    depends_on:
+      - migration
+    env_file:
+      - .env
+    volumes:
+      - ./seeder.sql:/docker-entrypoint-initdb.d/seeder.sql
+    entrypoint: ["sh", "-c", "sleep 5 && PGPASSWORD=${DB_PASSWORD} psql -h db -U ${DB_USER} -d ${DB_NAME} -f /docker-entrypoint-initdb.d/seeder.sql"]
+
   api:
     build: .
     container_name: secure_bank_api
     restart: always
-    environment:
-      DB_HOST: db
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      JWT_SECRET: ${JWT_SECRET}
-      API_PORT: ${API_PORT}
+    env_file:
+      - .env
     ports:
       - "${API_PORT}:${API_PORT}"
     depends_on:
-      - db
+      - seeder
 
 volumes:
   postgres_data:
