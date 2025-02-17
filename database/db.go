@@ -1,34 +1,36 @@
 package database
 
 import (
-	"database/sql"
-	"fmt"
-	"os"
+    "database/sql"
+    "fmt"
+    "os"
 
-	_ "github.com/lib/pq"
+    _ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
 func InitDB() {
-	dbHost := os.Getenv("DB_HOST")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
+    var err error
 
-	connStr := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable",
-		dbHost, dbUser, dbPassword, dbName)
+    dsn := fmt.Sprintf(
+        "host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+        os.Getenv("DB_HOST"),
+        os.Getenv("DB_PORT"),
+        os.Getenv("DB_USER"),
+        os.Getenv("DB_PASSWORD"),
+        os.Getenv("DB_NAME"),
+    )
 
-	var err error
-	DB, err = sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
+    DB, err = sql.Open("postgres", dsn)
+    if err != nil {
+        panic(fmt.Sprintf("Failed to connect to database: %v", err))
+    }
 
-	err = DB.Ping()
-	if err != nil {
-		panic(err)
-	}
+    err = DB.Ping()
+    if err != nil {
+        panic(fmt.Sprintf("Database is not reachable: %v", err))
+    }
 
-	fmt.Println("Connected to Database")
+    fmt.Println("Database connected successfully")
 }
